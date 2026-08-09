@@ -1,0 +1,13 @@
+
+import './App.css'
+
+function App() {
+
+  return (
+    <>
+<h1>Welcome to Tutor Booking and Management System!</h1>
+    </>
+  )
+}
+
+export default App
