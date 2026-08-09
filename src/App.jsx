@@ -5,7 +5,6 @@ function App() {
 
   return (
     <>
-<h1>Welcome to Tutor Booking and Management System!</h1>
     </>
   )
 }
