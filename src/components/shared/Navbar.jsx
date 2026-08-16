@@ -16,7 +16,7 @@ const Navbar = () => {
     ];
 
     return (
-        <header className="bg-[#151b2e]">
+        <header className="sticky top-0 z-50 w-full bg-[#030c2d]/70 backdrop-blur-xs">
             <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
                 <Link to="/" className="flex shrink-0 items-center gap-2.5">
                     <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-fuchsia-500 to-purple-600 shadow-[0_0_14px_rgba(217,70,239,0.45)]">
@@ -36,11 +36,8 @@ const Navbar = () => {
                             <NavLink
                                 to={link.to}
                                 className={({ isActive }) =>
-                                    cn(
-                                        "relative py-1 text-sm font-medium text-slate-300 transition-colors hover:text-white",
-                                        isActive &&
-                                            "text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-fuchsia-400"
-                                    )}>
+                                    cn("relative py-1 text-sm font-medium text-slate-300 transition-colors hover:text-white",
+                                        isActive && "text-white after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-full after:rounded-full after:bg-fuchsia-400")}>
                                 {link.label}
                             </NavLink>
                         </li>
@@ -85,10 +82,8 @@ const Navbar = () => {
                                     to={link.to}
                                     onClick={() => setIsMenuOpen(false)}
                                     className={({ isActive }) =>
-                                        cn(
-                                            "block rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white",
-                                            isActive && "bg-white/10 text-fuchsia-400"
-                                        )}>
+                                        cn("block rounded-md px-3 py-2 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white",
+                                            isActive && "bg-white/10 text-fuchsia-400")}>
                                     {link.label}
                                 </NavLink>
                             </li>
