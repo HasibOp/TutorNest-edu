@@ -53,7 +53,7 @@ const Navbar = () => {
                         {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                     </button>
                     <Link
-                        to="/login"
+                        to="/signin"
                         className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15">
                         Sign In
                     </Link>
