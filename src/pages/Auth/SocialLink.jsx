@@ -7,13 +7,14 @@ import { FaGoogle } from "react-icons/fa";
 
 
 
-const SocialLink = () => {
+const SocialLink = ({ variant = "dark" }) => {
     const { signInWithGoogle, setUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const axiosPublic = useAxiosPublic();
 
+    const isLight = variant === "light";
 
-        const handleGoogleLogin = () => {
+    const handleGoogleLogin = () => {
         signInWithGoogle()
             .then(res => {
                 const user = res.user;
@@ -35,16 +36,20 @@ const SocialLink = () => {
     return (
         <div>
             <div className="flex items-center justify-center gap-3 my-4">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="text-xs font-medium text-slate-500">OR</span>
-                <div className="flex-grow border-t border-white/10"></div>
+                <div className={`grow border-t ${isLight ? 'border-[#1f3d3a]/10' : 'border-white/10'}`}></div>
+                <span className={`text-xs font-medium ${isLight ? 'text-[#1f3d3a]/40' : 'text-slate-500'}`}>OR</span>
+                <div className={`grow border-t ${isLight ? 'border-[#1f3d3a]/10' : 'border-white/10'}`}></div>
             </div>
             <motion.button
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleGoogleLogin}
                 type="button"
-                className="w-full border border-white/10 bg-white/5 rounded-full py-2.5 flex justify-center items-center gap-2 text-white shadow-sm transition-colors hover:bg-white/10">
+                className={`w-full rounded-2xl py-3 flex justify-center items-center gap-2 shadow-sm transition-colors ${
+                    isLight
+                        ? 'border border-transparent bg-[#efe9d8] text-[#1f3d3a] hover:bg-[#e7e0cb]'
+                        : 'border border-white/10 bg-white/5 text-white hover:bg-white/10'
+                }`}>
                 <FaGoogle size={18}></FaGoogle> Continue with Google
             </motion.button>
         </div>

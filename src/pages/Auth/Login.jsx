@@ -192,7 +192,7 @@ const Login = () => {
                     transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}
                     className="relative z-10 hidden flex-col items-center gap-2 text-center lg:flex">
                     <img
-                        src="/login.png"
+                        src="/signin.png"
                         alt="Student learning online"
                         className="w-full max-w-md drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
                     />
