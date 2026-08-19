@@ -8,6 +8,8 @@ import Contact from "@/pages/Contact/Contact";
 import About from "@/pages/About/About";
 import Tutors from "@/pages/Tutors/Tutors";
 import Courses from "@/pages/Courses/Courses";
+import PrivateRoute from "./PrivateRoute";
+import Dashboard from "@/layouts/Dashboard";
 
 export const router = createBrowserRouter ([ 
 {
@@ -44,6 +46,16 @@ export const router = createBrowserRouter ([
        }
     ]
 },
+
+//---------dashboard------//
+{
+    path: "dashboard",
+    element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
+    children: [
+
+    ]
+},
+
  {
     path: "*",
     element: <NotFound></NotFound>

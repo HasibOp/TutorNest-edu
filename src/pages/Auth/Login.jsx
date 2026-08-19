@@ -48,12 +48,13 @@ const Login = () => {
             const user = result.user;
             setUser(user);
             Swal.fire({
-                title: 'You’re now logged in and ready to explore!',
+                title: "You're now logged in!",
+                icon: "success",
                 showClass: {
-                    popup: 'animate__animated animate__fadeInDown'
+                    popup: "animate__animated animate__fadeInDown"
                 },
                 hideClass: {
-                    popup: 'animate__animated animate__fadeOutUp'
+                    popup: "animate__animated animate__fadeOutUp"
                 }
             });
             navigate(from, { replace: true });

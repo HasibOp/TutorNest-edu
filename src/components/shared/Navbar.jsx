@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { BookOpen, Menu, Moon, Sparkles, Sun, X } from "lucide-react";
+import { BookOpen, LogOut, Menu, Moon, Sparkles, Sun, X } from "lucide-react";
 import { cn } from "../../lib/utils";
+import AuthContext from "@/provider/AuthContext";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDark, setIsDark] = useState(true);
+    const { user, logoutUser } = useContext(AuthContext);
 
     const navLinks = [
         { label: "Home", to: "/" },
@@ -13,7 +16,21 @@ const Navbar = () => {
         { label: "Courses", to: "/courses" },
         { label: "Tutors", to: "/tutors" },
         { label: "Contact", to: "/contact" },
+        
+        ...(user?.email
+            ? [{ to: '/dashboard', label: 'Dashboard' }]
+            : []),
     ];
+
+        const handleLogout = () => {
+        logoutUser()
+            .then(() => {
+                toast.success("Logged Out Successfully");
+            })
+            .catch(() => {
+                toast.error('Failed to Log Out');
+            })
+        }
 
     return (
         <header className="sticky top-0 z-50 w-full bg-[#030c2d]/70 backdrop-blur-xs">
@@ -52,16 +69,36 @@ const Navbar = () => {
                         className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-slate-200 transition-colors hover:bg-white/15">
                         {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                     </button>
-                    <Link
-                        to="/signin"
-                        className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15">
-                        Sign In
-                    </Link>
-                    <Link
-                        to="/signup"
-                        className="rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_16px_rgba(217,70,239,0.35)] transition-transform hover:scale-[1.03]">
-                        Sign Up
-                    </Link>
+                    {user?.email ? (
+                        <div className="flex items-center gap-3">
+                            <img
+                                src={user.photoURL || "https://i.ibb.co/2FsfXqM/default-avatar.png"}
+                                alt={user.displayName || "User"}
+                                title={user.displayName || user.email}
+                                className="h-9 w-9 rounded-full object-cover ring-2 ring-white/20"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleLogout}
+                                className="cursor-pointer flex items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15">
+                                <LogOut className="text-fuchsia-500 h-4 w-4" />
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <Link
+                                to="/signin"
+                                className="rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/15">
+                                Sign In
+                            </Link>
+                            <Link
+                                to="/signup"
+                                className="rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_16px_rgba(217,70,239,0.35)] transition-transform hover:scale-[1.03]">
+                                Sign Up
+                            </Link>
+                        </>
+                    )}
                 </div>
 
                 <button
@@ -97,18 +134,33 @@ const Navbar = () => {
                             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 text-slate-200 hover:bg-white/15">
                             {isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                         </button>
-                        <Link
-                            to="/login"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="flex-1 rounded-full bg-white/10 px-5 py-2 text-center text-sm font-semibold text-white hover:bg-white/15">
-                            Sign In
-                        </Link>
-                        <Link
-                            to="/signup"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="flex-1 rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-5 py-2 text-center text-sm font-semibold text-white">
-                            Sign Up
-                        </Link>
+                        {user?.email ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setIsMenuOpen(false);
+                                    handleLogout();
+                                }}
+                                className="flex flex-1 items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-2 text-center text-sm font-semibold text-white hover:bg-white/15">
+                                <LogOut className="text-fuchsia-500 h-4 w-4" />
+                                Logout
+                            </button>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/signin"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex-1 rounded-full bg-white/10 px-5 py-2 text-center text-sm font-semibold text-white hover:bg-white/15">
+                                    Sign In
+                                </Link>
+                                <Link
+                                    to="/signup"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex-1 rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-5 py-2 text-center text-sm font-semibold text-white">
+                                    Sign Up
+                                </Link>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
