@@ -10,10 +10,15 @@ import Tutors from "@/pages/Tutors/Tutors";
 import Courses from "@/pages/Courses/Courses";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
-import Dashboard from "@/layouts/Dashboard";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import DashboardHome from "@/layouts/DashboardHome";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import ManageUsers from "@/pages/admin/ManageUsers";
 import ManageCategories from "@/pages/admin/ManageCategories";
+import StudentDashboard from "@/pages/Student/Dashboard";
+import StudentProfile from "@/pages/Student/Profile";
+import TutorDashboard from "@/pages/Tutor/Dashboard";
+import TutorProfile from "@/pages/Tutor/Profile";
 
 export const router = createBrowserRouter ([ 
 {
@@ -54,8 +59,13 @@ export const router = createBrowserRouter ([
 //---------dashboard layout------//
 {
     path: "dashboard",
-    element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
+    element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
     children: [
+        {
+            index: true,
+            element: <DashboardHome></DashboardHome>
+        },
+
         //---------admin routes------//
         {
             path: "admin",
@@ -68,6 +78,26 @@ export const router = createBrowserRouter ([
         {
             path: "admin/categories",
             element: <AdminRoute><ManageCategories></ManageCategories></AdminRoute>
+        },
+
+        //---------student routes------//
+        {
+            path: "student",
+            element: <StudentDashboard></StudentDashboard>
+        },
+        {
+            path: "student/profile",
+            element: <StudentProfile></StudentProfile>
+        },
+
+        //---------tutor routes------//
+        {
+            path: "tutor",
+            element: <TutorDashboard></TutorDashboard>
+        },
+        {
+            path: "tutor/profile",
+            element: <TutorProfile></TutorProfile>
         },
     ]
 },
