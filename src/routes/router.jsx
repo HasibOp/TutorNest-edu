@@ -9,7 +9,11 @@ import About from "@/pages/About/About";
 import Tutors from "@/pages/Tutors/Tutors";
 import Courses from "@/pages/Courses/Courses";
 import PrivateRoute from "./PrivateRoute";
+import AdminRoute from "./AdminRoute";
 import Dashboard from "@/layouts/Dashboard";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import ManageUsers from "@/pages/admin/ManageUsers";
+import ManageCategories from "@/pages/admin/ManageCategories";
 
 export const router = createBrowserRouter ([ 
 {
@@ -47,12 +51,24 @@ export const router = createBrowserRouter ([
     ]
 },
 
-//---------dashboard------//
+//---------dashboard layout------//
 {
     path: "dashboard",
     element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>,
     children: [
-
+        //---------admin routes------//
+        {
+            path: "admin",
+            element: <AdminRoute><AdminDashboard></AdminDashboard></AdminRoute>
+        },
+        {
+            path: "admin/users",
+            element: <AdminRoute><ManageUsers></ManageUsers></AdminRoute>
+        },
+        {
+            path: "admin/categories",
+            element: <AdminRoute><ManageCategories></ManageCategories></AdminRoute>
+        },
     ]
 },
 
