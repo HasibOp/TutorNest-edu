@@ -275,7 +275,7 @@ const Signup = () => {
                                     {!submitting && <ChevronRight className="h-4 w-4" />}
                                 </Button>
                             </motion.div>
-                            <SocialLink variant="dark"></SocialLink>
+                            <SocialLink></SocialLink>
                         </form>
 
                         <div className="mt-5 text-center text-sm text-slate-400">
