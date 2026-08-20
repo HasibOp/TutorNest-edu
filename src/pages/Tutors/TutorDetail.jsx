@@ -1,8 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useContext, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BookOpen, Calendar, CalendarDays, Clock, DollarSign, GraduationCap, Sparkles } from "lucide-react";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import AuthContext from "@/provider/AuthContext";
 import Loader from "@/components/shared/Loader";
+import BookingModal from "./BookingModal";
 
 const timeToMinutes = (time) => {
     const [h, m] = time.split(':').map(Number);
@@ -18,11 +23,44 @@ const slotWidthPercent = (slot) => {
 const TutorDetail = () => {
     const { id } = useParams();
     const axiosPublic = useAxiosPublic();
+    const axiosSecure = useAxiosSecure();
+    const queryClient = useQueryClient();
+    const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
+    const [selectedSlot, setSelectedSlot] = useState(null);
 
     const { data: tutor, isPending, isError } = useQuery({
         queryKey: ['tutor-profile', id],
         queryFn: async () => (await axiosPublic.get(`/tutor-profiles/${id}`)).data,
     });
+
+    const { mutate: bookSession, isPending: isBooking } = useMutation({
+        mutationFn: async ({ date, subject }) =>
+            (await axiosSecure.post('/bookings', {
+                tutorProfileId: id,
+                date,
+                day: selectedSlot.day,
+                startTime: selectedSlot.startTime,
+                endTime: selectedSlot.endTime,
+                subject,
+            })).data,
+        onSuccess: () => {
+            toast.success('Session booked!');
+            setSelectedSlot(null);
+            queryClient.invalidateQueries({ queryKey: ['bookings'] });
+        },
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Failed to book session');
+        },
+    });
+
+    const handleSlotClick = (slot) => {
+        if (!user) {
+            navigate('/signin', { state: { from: { pathname: `/tutors/${id}` } } });
+            return;
+        }
+        setSelectedSlot(slot);
+    };
 
     if (isPending) {
         return <Loader></Loader>;
@@ -71,13 +109,11 @@ const TutorDetail = () => {
                             </div>
                         </div>
 
-                        <button
-                            type="button"
-                            disabled
-                            title="Booking is coming soon"
-                            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white opacity-70">
+                        <a
+                            href="#availability"
+                            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-r from-fuchsia-500 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02]">
                             Book Session
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -114,18 +150,21 @@ const TutorDetail = () => {
                 )}
 
                 {tutor.availability?.length > 0 && (
-                    <div className="rounded-2xl border border-white/10 bg-[#0a1130] p-6">
+                    <div id="availability" className="scroll-mt-6 rounded-2xl border border-white/10 bg-[#0a1130] p-6">
                         <div className="flex items-center gap-3">
                             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fuchsia-500/15 text-fuchsia-300">
                                 <Calendar className="h-4 w-4" />
                             </span>
                             <h2 className="text-sm font-semibold text-white">Weekly Availability</h2>
                         </div>
+                        <p className="mt-1 text-xs text-slate-500">Select a slot to book a session.</p>
                         <div className="mt-4 space-y-2.5">
                             {tutor.availability.map((slot, index) => (
-                                <div
+                                <button
+                                    type="button"
                                     key={index}
-                                    className="flex items-center gap-3 rounded-xl bg-white/5 px-4 py-2.5">
+                                    onClick={() => handleSlotClick(slot)}
+                                    className="flex w-full items-center gap-3 rounded-xl bg-white/5 px-4 py-2.5 text-left transition-colors hover:bg-fuchsia-500/15 cursor-pointer">
                                     <span className="inline-flex w-24 shrink-0 items-center gap-3 text-sm font-medium text-white">
                                         <CalendarDays className="h-3.5 w-3.5 text-amber-400" />
                                         {slot.day}
@@ -140,7 +179,7 @@ const TutorDetail = () => {
                                         <Clock className="h-3.5 w-3.5" />
                                         {slot.startTime} - {slot.endTime}
                                     </span>
-                                </div>
+                                </button>
                             ))}
                         </div>
                         <p className="mt-4 text-center text-xs text-slate-500">
@@ -149,6 +188,16 @@ const TutorDetail = () => {
                     </div>
                 )}
             </div>
+
+            {selectedSlot && (
+                <BookingModal
+                    slot={selectedSlot}
+                    subjects={tutor.subjects}
+                    onConfirm={bookSession}
+                    onClose={() => setSelectedSlot(null)}
+                    isSubmitting={isBooking}
+                ></BookingModal>
+            )}
         </div>
     );
 };

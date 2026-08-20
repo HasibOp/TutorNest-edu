@@ -5,6 +5,7 @@ import { CalendarClock, DollarSign, GraduationCap, User } from "lucide-react";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import AuthContext from "@/provider/AuthContext";
 import Loader from "@/components/shared/Loader";
+import BookingsList from "@/components/shared/BookingsList";
 
 const Dashboard = () => {
     const axiosSecure = useAxiosSecure();
@@ -72,6 +73,11 @@ const Dashboard = () => {
                 className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-white hover:bg-white/15">
                 Edit profile
             </Link>
+
+            <h2 className="mt-8 text-sm font-semibold text-white">My Sessions</h2>
+            <div className="mt-3">
+                <BookingsList perspective="tutor"></BookingsList>
+            </div>
         </div>
     );
 };
