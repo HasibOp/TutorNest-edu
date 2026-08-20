@@ -6,6 +6,10 @@ import useAxiosSecure from "@/hooks/useAxiosSecure";
 import Loader from "@/components/shared/Loader";
 
 const emptyForm = { name: "", description: "",};
+const formatDate = (date) =>
+    date
+        ? new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        : '—';
 
 const ManageCategories = () => {
     const axiosSecure = useAxiosSecure();
@@ -133,6 +137,7 @@ const ManageCategories = () => {
                         <tr>
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Description</th>
+                            <th className="px-4 py-3">Created</th>
                             <th className="px-4 py-3 text-right">Action</th>
                         </tr>
                     </thead>
@@ -143,6 +148,7 @@ const ManageCategories = () => {
                                    {category.name}
                                 </td>
                                 <td className="px-4 py-3 text-slate-400">{category.description || '—'}</td>
+                                <td className="px-4 py-3 text-slate-400">{formatDate(category.createdAt)}</td>
                                 <td className="px-4 py-3">
                                     <div className="flex justify-end gap-2">
                                         <button
