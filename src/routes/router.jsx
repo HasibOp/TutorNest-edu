@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound/NotFound";
 import Contact from "@/pages/Contact/Contact";
 import About from "@/pages/About/About";
 import Tutors from "@/pages/Tutors/Tutors";
+import TutorDetail from "@/pages/Tutors/TutorDetail";
 import Courses from "@/pages/Courses/Courses";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -40,6 +41,10 @@ export const router = createBrowserRouter ([
         {
             path: "/tutors",
             element: <Tutors></Tutors>
+        },
+        {
+            path: "/tutors/:id",
+            element: <TutorDetail></TutorDetail>
         },
         {
             path: "/courses",
