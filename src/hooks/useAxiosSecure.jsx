@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { API_BASE_URL } from "@/lib/api";
 import AuthContext from "@/provider/AuthContext";
 
@@ -26,6 +27,9 @@ const useAxiosSecure = () => {
             (error) => {
                 const status = error?.response?.status;
                 if (status === 401 || status === 403) {
+                    if (error?.response?.data?.message === 'this account has been banned') {
+                        toast.error('Your account has been banned. Contact support if you think this is a mistake.');
+                    }
                     logoutUser().finally(() => navigate('/signin'));
                 }
                 return Promise.reject(error);
