@@ -16,6 +16,7 @@ import DashboardHome from "@/layouts/DashboardHome";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import ManageUsers from "@/pages/admin/ManageUsers";
 import ManageCategories from "@/pages/admin/ManageCategories";
+import ManageBookings from "@/pages/admin/ManageBookings";
 import StudentDashboard from "@/pages/Student/Dashboard";
 import StudentProfile from "@/pages/Student/Profile";
 import TutorDashboard from "@/pages/Tutor/Dashboard";
@@ -83,6 +84,10 @@ export const router = createBrowserRouter ([
         {
             path: "admin/categories",
             element: <AdminRoute><ManageCategories></ManageCategories></AdminRoute>
+        },
+        {
+            path: "admin/bookings",
+            element: <AdminRoute><ManageBookings></ManageBookings></AdminRoute>
         },
 
         //---------student routes------//

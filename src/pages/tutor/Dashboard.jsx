@@ -24,7 +24,7 @@ const Dashboard = () => {
     if (!profile) {
         return (
             <div>
-                <h1 className="text-2xl font-bold text-white">Welcome, {user?.displayName || 'tutor'}!</h1>
+                <h1 className="text-2xl font-bold text-amber-100">Good to see you, {user?.displayName || 'tutor'}👋!</h1>
                 <div className="mt-6 rounded-2xl border border-dashed border-white/20 bg-white/5 p-8 text-center">
                     <User className="mx-auto h-8 w-8 text-fuchsia-400" />
                     <p className="mt-3 text-sm text-slate-300">
@@ -42,29 +42,29 @@ const Dashboard = () => {
 
     return (
         <div>
-            <h1 className="lg:text-6xl text-3xl font-bold text-amber-400 mt-10">Good to see you, {user?.displayName || 'tutor'}!</h1>
-            <p className="text-amber-50 mt-4">Manage your lessons, connect with students, and keep your teaching journey moving forward!</p>
+            <h1 className="text-2xl font-bold text-white">Good to see you, {user?.displayName || 'tutor'}👋!</h1>
+            <p className="mt-1 text-sm text-slate-400">Manage your lessons and keep your teaching journey moving forward.</p>
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <GraduationCap className="h-4 w-4 text-fuchsia-400" />
-                        <span className="text-sm font-medium">Subjects</span>
-                    </div>
-                    <p className="mt-3 text-3xl font-semibold text-white">{profile.subjects?.length || 0}</p>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-500/15 text-fuchsia-300">
+                        <GraduationCap className="h-5 w-5" />
+                    </span>
+                    <p className="mt-3 text-sm font-medium text-slate-400">Subjects</p>
+                    <p className="mt-1 text-3xl font-semibold text-white">{profile.subjects?.length || 0}</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <DollarSign className="h-4 w-4 text-fuchsia-400" />
-                        <span className="text-sm font-medium">Hourly rate</span>
-                    </div>
-                    <p className="mt-3 text-3xl font-semibold text-white">${profile.hourlyRate || 0}</p>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+                        <DollarSign className="h-5 w-5" />
+                    </span>
+                    <p className="mt-3 text-sm font-medium text-slate-400">Hourly rate</p>
+                    <p className="mt-1 text-3xl font-semibold text-white">${profile.hourlyRate || 0}</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                    <div className="flex items-center gap-2 text-slate-400">
-                        <CalendarClock className="h-4 w-4 text-fuchsia-400" />
-                        <span className="text-sm font-medium">Weekly slots</span>
-                    </div>
-                    <p className="mt-3 text-3xl font-semibold text-white">{profile.availability?.length || 0}</p>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/15 text-blue-300">
+                        <CalendarClock className="h-5 w-5" />
+                    </span>
+                    <p className="mt-3 text-sm font-medium text-slate-400">Weekly slots</p>
+                    <p className="mt-1 text-3xl font-semibold text-white">{profile.availability?.length || 0}</p>
                 </div>
             </div>
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { BookOpen, LayoutDashboard, ListTree, Menu, User, Users, X } from "lucide-react";
+import { BookOpen, CalendarClock, LayoutDashboard, ListTree, Menu, User, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useRole from "@/hooks/useRole";
 import Loader from "@/components/shared/Loader";
@@ -10,6 +10,7 @@ const linksByRole = {
         { label: "Overview", to: "/dashboard/admin", icon: LayoutDashboard, end: true },
         { label: "Manage Users", to: "/dashboard/admin/users", icon: Users },
         { label: "Manage Categories", to: "/dashboard/admin/categories", icon: ListTree },
+        { label: "Manage Bookings", to: "/dashboard/admin/bookings", icon: CalendarClock },
     ],
     tutor: [
         { label: "Overview", to: "/dashboard/tutor", icon: LayoutDashboard, end: true },
@@ -35,7 +36,7 @@ const DashboardLayout = () => {
         <div className="flex min-h-screen bg-[#020921]">
             <aside
                 className={cn(
-                    "fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-white/10 bg-[#030c2d] transition-transform lg:static lg:translate-x-0",
+                    "fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-white/10 bg-[#030c2d] transition-transform lg:relative lg:translate-x-0",
                     isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 )}>
                 <div className="flex h-16 items-center gap-2.5 border-b border-white/10 px-6">
@@ -47,7 +48,7 @@ const DashboardLayout = () => {
                     </span>
                 </div>
 
-                <nav className="flex flex-col gap-1 p-4">
+                <nav className="flex flex-col gap-1 p-4 pb-40">
                     {role && (
                         <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
                             {role} panel
@@ -69,6 +70,14 @@ const DashboardLayout = () => {
                         </NavLink>
                     ))}
                 </nav>
+
+                <div className="absolute bottom-4 left-4 right-4 overflow-hidden rounded-2xl border border-white/10 bg-linear-to-b from-fuchsia-500/10 to-transparent">
+                    <img src="/dasboardImg.png" alt="" className="h-28 w-full object-cover object-top" />
+                    <div className="px-4 pb-4 pt-2">
+                        <p className="text-sm font-semibold text-white">Keep up the good work!</p>
+                        <p className="mt-0.5 text-xs text-slate-400">Your platform is growing every day.</p>
+                    </div>
+                </div>
             </aside>
 
             {isSidebarOpen && (

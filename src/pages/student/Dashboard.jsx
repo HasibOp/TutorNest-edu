@@ -8,7 +8,7 @@ const Dashboard = () => {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold text-white">Welcome back, {user?.displayName || 'there'}!</h1>
+            <h1 className="text-2xl font-bold text-amber-100">Good to see you, {user?.displayName || 'there'}👋!</h1>
             <p className="mt-1 text-sm text-slate-400">Here are your upcoming and past sessions.</p>
 
             <div className="mt-6 flex items-center justify-between">
