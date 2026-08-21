@@ -2,11 +2,12 @@ import { useContext, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { BookOpen, Calendar, CalendarDays, Clock, DollarSign, GraduationCap, Sparkles } from "lucide-react";
+import { BookOpen, Calendar, CalendarDays, Clock, DollarSign, GraduationCap, MessageSquare, Sparkles, Star } from "lucide-react";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import AuthContext from "@/provider/AuthContext";
 import Loader from "@/components/shared/Loader";
+import StarRating from "@/components/shared/StarRating";
 import BookingModal from "./BookingModal";
 
 const timeToMinutes = (time) => {
@@ -32,6 +33,12 @@ const TutorDetail = () => {
     const { data: tutor, isPending, isError } = useQuery({
         queryKey: ['tutor-profile', id],
         queryFn: async () => (await axiosPublic.get(`/tutor-profiles/${id}`)).data,
+    });
+
+    const { data: reviewData } = useQuery({
+        queryKey: ['reviews', tutor?.userEmail],
+        enabled: !!tutor?.userEmail,
+        queryFn: async () => (await axiosPublic.get(`/reviews/tutor/${tutor.userEmail}`)).data,
     });
 
     const { mutate: bookSession, isPending: isBooking } = useMutation({
@@ -97,11 +104,21 @@ const TutorDetail = () => {
                                 <Sparkles className="h-4 w-4 text-amber-300" />
                                 <h1 className="text-xl font-bold text-white sm:text-2xl">{tutor.name || 'Unnamed Tutor'}</h1>
                             </div>
-                            {tutor.categoryName && (
-                                <span className="mt-1.5 inline-block rounded-full bg-fuchsia-500/15 px-3 py-0.5 text-xs font-semibold text-fuchsia-300">
-                                    {tutor.categoryName}
-                                </span>
-                            )}
+                            <div className="mt-1.5 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                                {tutor.categoryName && (
+                                    <span className="inline-block rounded-full bg-fuchsia-500/15 px-3 py-0.5 text-xs font-semibold text-fuchsia-300">
+                                        {tutor.categoryName}
+                                    </span>
+                                )}
+                                {tutor.totalReviews > 0 ? (
+                                    <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-300">
+                                        <Star className="h-3.5 w-3.5 fill-amber-300" />
+                                        {tutor.averageRating.toFixed(1)} ({tutor.totalReviews} review{tutor.totalReviews === 1 ? '' : 's'})
+                                    </span>
+                                ) : (
+                                    <span className="text-xs text-slate-500">No reviews yet</span>
+                                )}
+                            </div>
                             <div className="mt-2 flex items-center justify-center gap-1.5 text-sm font-semibold text-white sm:justify-start">
                                 <DollarSign className="h-4 w-4 text-fuchsia-400" />
                                 {tutor.hourlyRate}
@@ -187,6 +204,42 @@ const TutorDetail = () => {
                         </p>
                     </div>
                 )}
+
+                <div className="rounded-2xl border border-white/10 bg-[#0a1130] p-6">
+                    <div className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-fuchsia-500/15 text-fuchsia-300">
+                            <MessageSquare className="h-4 w-4" />
+                        </span>
+                        <h2 className="text-sm font-semibold text-white">
+                            Reviews {reviewData?.totalReviews > 0 && `(${reviewData.totalReviews})`}
+                        </h2>
+                    </div>
+
+                    {!reviewData?.reviews?.length ? (
+                        <p className="mt-3 text-sm text-slate-500">No reviews yet.</p>
+                    ) : (
+                        <div className="mt-4 space-y-4">
+                            {reviewData.reviews.map((review) => (
+                                <div key={review._id} className="rounded-xl bg-white/5 p-4">
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src={review.studentPhoto || "https://i.ibb.co/2FsfXqM/default-avatar.png"}
+                                            alt={review.studentName || "Student"}
+                                            className="h-8 w-8 rounded-full object-cover"
+                                        />
+                                        <div>
+                                            <p className="text-sm font-semibold text-white">{review.studentName || 'Student'}</p>
+                                            <StarRating rating={review.rating}></StarRating>
+                                        </div>
+                                    </div>
+                                    {review.comment && (
+                                        <p className="mt-2 text-sm text-slate-400">{review.comment}</p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {selectedSlot && (

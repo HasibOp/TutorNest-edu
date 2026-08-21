@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronDown, Grid3x3, GraduationCap, LayoutList, Search, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Grid3x3, GraduationCap, LayoutList, Search, Sparkles, Star } from "lucide-react";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 import Loader from "@/components/shared/Loader";
 
@@ -163,18 +163,14 @@ const Tutors = () => {
                         <p className="mt-3 text-sm text-slate-300">No tutors found.</p>
                     </div>
                 ) : (
-                    <div
-                        className={
-                            view === "grid"
+                    <div className={view === "grid"
                                 ? "mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
-                                : "mt-6 flex flex-col gap-4"
-                        }>
+                                : "mt-6 flex flex-col gap-4"}>
                         {visibleTutors.map((tutor) => (
                             <Link
                                 key={tutor._id}
                                 to={`/tutors/${tutor._id}`}
-                                className={
-                                    view === "grid"
+                                className={view === "grid"
                                         ? "group rounded-2xl border border-amber-400/20 bg-white/5 p-5 transition-colors hover:bg-white/10"
                                         : "group flex flex-col gap-4 rounded-2xl border border-amber-400/20 bg-white/5 p-5 transition-colors hover:bg-white/10 sm:flex-row sm:items-center"
                                 }>
@@ -188,6 +184,14 @@ const Tutors = () => {
                                         <p className="font-semibold text-white">{tutor.name || 'Unnamed Tutor'}</p>
                                         {tutor.categoryName && (
                                             <p className="text-xs font-medium text-fuchsia-400">{tutor.categoryName}</p>
+                                        )}
+                                        {tutor.totalReviews > 0 ? (
+                                            <span className="mt-0.5 inline-flex items-center gap-1 text-xs text-amber-300">
+                                                <Star className="h-3 w-3 fill-amber-300" />
+                                                {tutor.averageRating.toFixed(1)} ({tutor.totalReviews})
+                                            </span>
+                                        ) : (
+                                            <span className="mt-0.5 inline-block text-xs text-slate-500">New</span>
                                         )}
                                     </div>
                                 </div>

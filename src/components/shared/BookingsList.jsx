@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { CalendarClock, CheckCircle2, XCircle } from "lucide-react";
+import { CalendarClock, CheckCircle2, Star, XCircle } from "lucide-react";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import Loader from "@/components/shared/Loader";
+import ReviewModal from "@/components/shared/ReviewModal";
 
 const statusStyles = {
     confirmed: 'bg-fuchsia-500/15 text-fuchsia-300',
@@ -13,6 +15,7 @@ const statusStyles = {
 const BookingsList = ({ perspective }) => {
     const axiosSecure = useAxiosSecure();
     const queryClient = useQueryClient();
+    const [reviewTarget, setReviewTarget] = useState(null);
 
     const { data: bookings = [], isPending } = useQuery({
         queryKey: ['bookings'],
@@ -28,6 +31,24 @@ const BookingsList = ({ perspective }) => {
         },
         onError: (error) => {
             toast.error(error?.response?.data?.message || 'Failed to update booking');
+        },
+    });
+
+    const { mutate: submitReview, isPending: isSubmittingReview } = useMutation({
+        mutationFn: async ({ rating, comment }) =>
+            (await axiosSecure.post('/reviews', {
+                bookingId: reviewTarget._id,
+                rating,
+                comment,
+            })).data,
+        onSuccess: () => {
+            toast.success('Review submitted');
+            setReviewTarget(null);
+            queryClient.invalidateQueries({ queryKey: ['bookings'] });
+            queryClient.invalidateQueries({ queryKey: ['reviews'] });
+        },
+        onError: (error) => {
+            toast.error(error?.response?.data?.message || 'Failed to submit review');
         },
     });
 
@@ -83,9 +104,27 @@ const BookingsList = ({ perspective }) => {
                                 Cancel
                             </button>
                         )}
+                        {booking.status === 'completed' && perspective === 'student' && !booking.reviewed && (
+                            <button
+                                type="button"
+                                onClick={() => setReviewTarget(booking)}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-3 py-1.5 text-xs font-semibold text-amber-300 hover:bg-amber-500/25">
+                                <Star className="h-3.5 w-3.5" />
+                                Leave a review
+                            </button>
+                        )}
                     </div>
                 </div>
             ))}
+
+            {reviewTarget && (
+                <ReviewModal
+                    tutorName={reviewTarget.tutorName}
+                    onSubmit={submitReview}
+                    onClose={() => setReviewTarget(null)}
+                    isSubmitting={isSubmittingReview}
+                ></ReviewModal>
+            )}
         </div>
     );
 };
