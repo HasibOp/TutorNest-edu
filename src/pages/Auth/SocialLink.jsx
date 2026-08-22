@@ -80,7 +80,7 @@ const SocialLink = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleGoogleLogin}
                 type="button"
-                className="w-full rounded-2xl py-3 flex justify-center items-center gap-2 shadow-sm transition-colors border border-white/10 bg-white/5 text-white hover:bg-white/10">
+                className="cursor-pointer w-full rounded-2xl py-3 flex justify-center items-center gap-2 shadow-sm transition-colors border border-white/10 bg-white/5 text-white hover:bg-white/10">
                 <FaGoogle size={18}></FaGoogle> Continue with Google
             </motion.button>
 

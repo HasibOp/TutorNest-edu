@@ -269,7 +269,7 @@ const Signup = () => {
                                 <Button
                                     type="submit"
                                     disabled={submitting}
-                                    className="h-12 w-full gap-2 rounded-2xl bg-linear-to-r from-amber-300 to-orange-400 text-base font-semibold text-[#151b2e] shadow-md shadow-orange-400/20 transition hover:opacity-90 disabled:opacity-60"
+                                    className="cursor-pointer h-12 w-full gap-2 rounded-2xl bg-linear-to-r from-amber-300 to-orange-400 text-base font-semibold text-[#151b2e] shadow-md shadow-orange-400/20 transition hover:opacity-90 disabled:opacity-60"
                                 >
                                     {submitting ? "Creating account..." : "Create Account"}
                                     {!submitting && <ChevronRight className="h-4 w-4" />}

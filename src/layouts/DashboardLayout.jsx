@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { BookOpen, CalendarClock, LayoutDashboard, ListTree, Menu, User, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useRole from "@/hooks/useRole";
@@ -34,38 +34,34 @@ const DashboardLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-[#020921]">
-            <aside
-                className={cn(
+            <aside className={cn(
                     "fixed inset-y-0 left-0 z-40 w-64 shrink-0 border-r border-white/10 bg-[#030c2d] transition-transform lg:relative lg:translate-x-0",
                     isSidebarOpen ? "translate-x-0" : "-translate-x-full"
                 )}>
-                <div className="flex h-16 items-center gap-2.5 border-b border-white/10 px-6">
+                <Link to="/" className="flex h-16 items-center gap-2.5 border-b border-white/10 px-6">
                     <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-fuchsia-500 to-purple-600 shadow-[0_0_14px_rgba(217,70,239,0.45)]">
                         <BookOpen className="h-5 w-5 text-white" strokeWidth={2.4} />
                     </span>
                     <span className="text-lg font-bold text-white">
                         TutorNest<span className="text-fuchsia-400">-edu</span>
                     </span>
-                </div>
+                </Link>
 
                 <nav className="flex flex-col gap-1 p-4 pb-40">
                     {role && (
-                        <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-amber-300">
                             {role} panel
                         </p>
                     )}
                     {links.map(({ label, to, icon: Icon, end }) => (
-                        <NavLink
-                            key={to}
-                            to={to}
-                            end={end}
+                        <NavLink key={to} to={to} end={end}
                             onClick={() => setIsSidebarOpen(false)}
                             className={({ isActive }) =>
                                 cn(
                                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white",
                                     isActive && "bg-white/10 text-white"
                                 )}>
-                            <Icon className="h-4 w-4" />
+                            <Icon className="h-4 w-4 text-amber-400" />
                             {label}
                         </NavLink>
                     ))}

@@ -167,7 +167,7 @@ const Login = () => {
                             <Button
                                 type="submit"
                                 disabled={submitting}
-                                className="w-full gap-2 rounded-full bg-linear-to-r from-amber-300 to-orange-400 py-2 px-4 font-semibold text-[#151b2e] shadow-md shadow-orange-400/20 transition hover:opacity-90 disabled:opacity-60">
+                                className="cursor-pointer w-full gap-2 rounded-full bg-linear-to-r from-amber-300 to-orange-400 py-2 px-4 font-semibold text-[#151b2e] shadow-md shadow-orange-400/20 transition hover:opacity-90 disabled:opacity-60">
                                 {submitting ? "Signing in..." : "Login"}
                             </Button>
                         </motion.div>
