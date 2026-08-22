@@ -248,8 +248,8 @@ const TutorDetail = () => {
                     subjects={tutor.subjects}
                     onConfirm={bookSession}
                     onClose={() => setSelectedSlot(null)}
-                    isSubmitting={isBooking}
-                ></BookingModal>
+                    isSubmitting={isBooking}>
+                </BookingModal>
             )}
         </div>
     );

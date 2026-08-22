@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { ArrowRight, ChevronDown, Grid3x3, GraduationCap, LayoutList, Search, Sparkles, Star } from "lucide-react";
+import { Grid3x3, GraduationCap, LayoutList, Search, Sparkles } from "lucide-react";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
 import Loader from "@/components/shared/Loader";
+import TutorFilters from "@/components/tutor/TutorFilters";
+import CategoryDropdown from "@/components/tutor/CategoryDropdown";
+import TutorCard from "@/components/tutor/TutorCard";
+import { PRICE_RANGES } from "@/components/tutor/priceRanges";
 
 const Tutors = () => {
     const axiosPublic = useAxiosPublic();
@@ -12,6 +15,10 @@ const Tutors = () => {
     const [view, setView] = useState("grid");
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const categoryRef = useRef(null);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const filterRef = useRef(null);
+    const [minRating, setMinRating] = useState(0);
+    const [priceLabel, setPriceLabel] = useState('Any');
 
     const { data: categories = [] } = useQuery({
         queryKey: ['categories'],
@@ -22,6 +29,9 @@ const Tutors = () => {
         const handleClickOutside = (e) => {
             if (categoryRef.current && !categoryRef.current.contains(e.target)) {
                 setIsCategoryOpen(false);
+            }
+            if (filterRef.current && !filterRef.current.contains(e.target)) {
+                setIsFilterOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -44,12 +54,31 @@ const Tutors = () => {
 
     const visibleTutors = useMemo(() => {
         const q = search.trim().toLowerCase();
-        if (!q) return tutors;
-        return tutors.filter((tutor) =>
-            tutor.name?.toLowerCase().includes(q) ||
-            tutor.subjects?.some((s) => s.toLowerCase().includes(q))
-        );
-    }, [tutors, search]);
+
+        return tutors.filter((tutor) => {
+            if (q && !tutor.name?.toLowerCase().includes(q) && !tutor.subjects?.some((s) => s.toLowerCase().includes(q))) {
+                return false;
+            }
+            if (minRating > 0 && (tutor.averageRating || 0) < minRating) {
+                return false;
+            }
+            const priceRange = PRICE_RANGES[priceLabel];
+            if (priceRange) {
+                const [min, max] = priceRange;
+                if (tutor.hourlyRate < min || tutor.hourlyRate > max) {
+                    return false;
+                }
+            }
+            return true;
+        });
+    }, [tutors, search, minRating, priceLabel]);
+
+    const activeFilterCount = (minRating > 0 ? 1 : 0) + (priceLabel !== 'Any' ? 1 : 0);
+
+    const clearFilters = () => {
+        setMinRating(0);
+        setPriceLabel('Any');
+    };
 
     return (
         <div className="min-h-screen bg-[#020921]">
@@ -76,49 +105,15 @@ const Tutors = () => {
 
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="relative" ref={categoryRef}>
-                        <button
-                            type="button"
-                            onClick={() => setIsCategoryOpen((prev) => !prev)}
-                            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10">
-                            {selectedCategoryName}
-                            <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform ${isCategoryOpen ? 'rotate-180' : ''}`} />
-                        </button>
-
-                        {isCategoryOpen && (
-                            <div className="absolute left-0 top-full z-20 mt-2 w-56 rounded-2xl border border-white/10 bg-[#0a1130] p-2 shadow-xl">
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setCategoryId("");
-                                        setIsCategoryOpen(false);
-                                    }}
-                                    className={`block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
-                                        categoryId === ""
-                                            ? 'bg-fuchsia-500/15 text-fuchsia-300'
-                                            : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                                    }`}>
-                                    All Categories
-                                </button>
-                                {categories.map((category) => (
-                                    <button
-                                        key={category._id}
-                                        type="button"
-                                        onClick={() => {
-                                            setCategoryId(category._id);
-                                            setIsCategoryOpen(false);
-                                        }}
-                                        className={`block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
-                                            categoryId === category._id
-                                                ? 'bg-fuchsia-500/15 text-fuchsia-300'
-                                                : 'text-slate-300 hover:bg-white/10 hover:text-white'
-                                        }`}>
-                                        {category.name}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <CategoryDropdown
+                        categoryRef={categoryRef}
+                        isCategoryOpen={isCategoryOpen}
+                        setIsCategoryOpen={setIsCategoryOpen}
+                        categories={categories}
+                        categoryId={categoryId}
+                        setCategoryId={setCategoryId}
+                        selectedCategoryName={selectedCategoryName}>
+                    </CategoryDropdown>
 
                     <div className="flex items-center gap-2">
                         <div className="relative">
@@ -130,6 +125,19 @@ const Tutors = () => {
                                 className="h-10 w-48 rounded-full border border-white/10 bg-white/5 pl-9 pr-4 text-sm text-white placeholder:text-slate-500 outline-none focus:border-fuchsia-400/60 sm:w-64"
                             />
                         </div>
+
+                        <TutorFilters
+                            filterRef={filterRef}
+                            isFilterOpen={isFilterOpen}
+                            setIsFilterOpen={setIsFilterOpen}
+                            minRating={minRating}
+                            setMinRating={setMinRating}
+                            priceLabel={priceLabel}
+                            setPriceLabel={setPriceLabel}
+                            activeFilterCount={activeFilterCount}
+                            clearFilters={clearFilters}>
+                        </TutorFilters>
+
                         <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 p-1">
                             <button
                                 type="button"
@@ -160,72 +168,27 @@ const Tutors = () => {
                 ) : visibleTutors.length === 0 ? (
                     <div className="mt-10 rounded-2xl border border-dashed border-white/20 bg-white/5 p-10 text-center">
                         <GraduationCap className="mx-auto h-8 w-8 text-fuchsia-400" />
-                        <p className="mt-3 text-sm text-slate-300">No tutors found.</p>
+                        <p className="mt-3 text-sm text-slate-300">
+                            {tutors.length === 0 ? 'No tutors found.' : 'No tutors match your filters.'}
+                        </p>
+                        {tutors.length > 0 && (activeFilterCount > 0 || search) && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    clearFilters();
+                                    setSearch("");
+                                }}
+                                className="mt-3 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/15">
+                                Clear filters
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className={view === "grid"
                                 ? "mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
                                 : "mt-6 flex flex-col gap-4"}>
                         {visibleTutors.map((tutor) => (
-                            <Link
-                                key={tutor._id}
-                                to={`/tutors/${tutor._id}`}
-                                className={view === "grid"
-                                        ? "group rounded-2xl border border-amber-400/20 bg-white/5 p-5 transition-colors hover:bg-white/10"
-                                        : "group flex flex-col gap-4 rounded-2xl border border-amber-400/20 bg-white/5 p-5 transition-colors hover:bg-white/10 sm:flex-row sm:items-center"
-                                }>
-                                <div className={view === "grid" ? "flex items-center gap-3" : "flex items-center gap-3 sm:w-64 sm:shrink-0"}>
-                                    <img
-                                        src={tutor.photo || "https://i.ibb.co/2FsfXqM/default-avatar.png"}
-                                        alt={tutor.name || "Tutor"}
-                                        className="h-14 w-14 rounded-full object-cover ring-2 ring-white/10"
-                                    />
-                                    <div>
-                                        <p className="font-semibold text-white">{tutor.name || 'Unnamed Tutor'}</p>
-                                        {tutor.categoryName && (
-                                            <p className="text-xs font-medium text-fuchsia-400">{tutor.categoryName}</p>
-                                        )}
-                                        {tutor.totalReviews > 0 ? (
-                                            <span className="mt-0.5 inline-flex items-center gap-1 text-xs text-amber-300">
-                                                <Star className="h-3 w-3 fill-amber-300" />
-                                                {tutor.averageRating.toFixed(1)} ({tutor.totalReviews})
-                                            </span>
-                                        ) : (
-                                            <span className="mt-0.5 inline-block text-xs text-slate-500">New</span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className={view === "grid" ? "" : "flex-1"}>
-                                    {tutor.bio && (
-                                        <p className="mt-3 line-clamp-2 text-sm text-slate-400 sm:mt-0">{tutor.bio}</p>
-                                    )}
-
-                                    {tutor.subjects?.length > 0 && (
-                                        <div className="mt-3 flex flex-wrap gap-1.5">
-                                            {tutor.subjects.slice(0, 3).map((subject) => (
-                                                <span
-                                                    key={subject}
-                                                    className="rounded-full bg-fuchsia-500/15 px-2.5 py-0.5 text-xs font-medium text-fuchsia-300">
-                                                    {subject}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div
-                                    className={
-                                        view === "grid"
-                                            ? "mt-4 flex items-center justify-between border-t border-amber-400/20 pt-3"
-                                            : "flex shrink-0 items-center gap-4 border-t border-amber-400/20 pt-3 sm:border-t-0 sm:pt-0"
-                                    }>
-                                    <span className="text-sm font-semibold text-white">${tutor.hourlyRate}/hr</span>
-                                    <span className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold text-amber-400 transition-colors group-hover:bg-white/15">
-                                        <ArrowRight className="h-4 w-4" />
-                                    </span>
-                                </div>
-                            </Link>
+                            <TutorCard key={tutor._id} tutor={tutor} view={view}></TutorCard>
                         ))}
                     </div>
                 )}
