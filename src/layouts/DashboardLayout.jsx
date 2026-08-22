@@ -4,6 +4,7 @@ import { BookOpen, CalendarClock, LayoutDashboard, ListTree, Menu, User, Users, 
 import { cn } from "@/lib/utils";
 import useRole from "@/hooks/useRole";
 import Loader from "@/components/shared/Loader";
+import ChatWidget from "@/components/shared/ChatWidget";
 
 const linksByRole = {
     admin: [
@@ -97,6 +98,7 @@ const DashboardLayout = () => {
                     <Outlet></Outlet>
                 </main>
             </div>
+            <ChatWidget></ChatWidget>
         </div>
     );
 };
