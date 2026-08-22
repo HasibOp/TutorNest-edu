@@ -6,7 +6,7 @@ import Loader from "@/components/shared/Loader";
 import TutorFilters from "@/components/tutor/TutorFilters";
 import CategoryDropdown from "@/components/tutor/CategoryDropdown";
 import TutorCard from "@/components/tutor/TutorCard";
-import { PRICE_RANGES } from "@/components/tutor/priceRanges";
+import { PRICE_RANGES } from "@/lib/priceRanges";
 
 const Tutors = () => {
     const axiosPublic = useAxiosPublic();

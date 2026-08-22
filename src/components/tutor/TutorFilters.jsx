@@ -1,5 +1,5 @@
 import { Filter } from "lucide-react";
-import { PRICE_RANGES } from "./priceRanges";
+import { PRICE_RANGES } from "../../lib/priceRanges";
 
 const RATING_OPTIONS = [0, 3, 4, 4.5];
 
